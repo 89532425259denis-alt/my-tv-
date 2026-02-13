@@ -1,0 +1,25 @@
+name: IPTV_Update
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */2 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - run: pip install requests
+      - run: python generator.py
+      - name: Push
+        run: |
+          git config --global user.name "NetErrror_Bot"
+          git config --global user.email "bot@neterror.sys"
+          git add playlist.m3u
+          git commit -m "Update" || exit 0
+          git push origin main --force
